@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Widget affichant un indicateur de chargement
-///
-/// Affiche un spinner centré avec un message optionnel.
 class LoadingWidget extends StatelessWidget {
   const LoadingWidget({
     this.message,
     super.key,
   });
 
-  /// Message optionnel à afficher sous le spinner
   final String? message;
 
   @override

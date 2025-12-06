@@ -1,9 +1,5 @@
 import 'package:flutter/services.dart';
 
-/// Gestionnaire du Method Channel pour la communication avec React Native
-///
-/// Permet de recevoir les mises à jour d'userId depuis l'application
-/// React Native et de les transmettre au SDK.
 class MethodChannelHandler {
   MethodChannelHandler._();
 
@@ -12,15 +8,11 @@ class MethodChannelHandler {
 
   static Function(String userId)? _onUserIdUpdated;
 
-  /// Initialise le handler du Method Channel
-  ///
-  /// [onUserIdUpdated] Callback appelé quand l'userId est mis à jour
   static void initialize({Function(String userId)? onUserIdUpdated}) {
     _onUserIdUpdated = onUserIdUpdated;
     _channel.setMethodCallHandler(_handleMethodCall);
   }
 
-  /// Gère les appels de méthode depuis le natif
   static Future<dynamic> _handleMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'updateUserId':
@@ -37,7 +29,6 @@ class MethodChannelHandler {
     }
   }
 
-  /// Récupère l'userId initial depuis le natif
   static Future<String?> getInitialUserId() async {
     try {
       final result = await _channel.invokeMethod<String>('getInitialUserId');
@@ -47,7 +38,6 @@ class MethodChannelHandler {
     }
   }
 
-  /// Dispose le handler
   static void dispose() {
     _onUserIdUpdated = null;
   }

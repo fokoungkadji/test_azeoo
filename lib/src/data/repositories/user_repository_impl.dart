@@ -10,10 +10,6 @@ import '../../domain/repositories/user_repository.dart';
 import '../datasources/user_local_datasource.dart';
 import '../datasources/user_remote_datasource.dart';
 
-/// Implémentation du repository utilisateur
-///
-/// Gère la logique de récupération des données depuis le cache
-/// ou l'API selon la stratégie définie.
 @LazySingleton(as: UserRepository)
 class UserRepositoryImpl implements UserRepository {
   const UserRepositoryImpl(
@@ -29,7 +25,6 @@ class UserRepositoryImpl implements UserRepository {
     required String userId,
     bool forceRefresh = false,
   }) async {
-    // Si on ne force pas le refresh, essayer le cache d'abord
     if (!forceRefresh) {
       try {
         final cachedUser = await _localDataSource.getCachedUserProfile(userId);
@@ -38,27 +33,22 @@ class UserRepositoryImpl implements UserRepository {
           return Right(cachedUser.toEntity());
         }
       } on CacheException {
-        // Ignorer les erreurs de cache et continuer avec l'API
       }
     }
 
-    // Récupérer depuis l'API
     return _fetchFromRemote(userId);
   }
 
-  /// Récupère les données depuis l'API et les met en cache
   Future<Either<Failure, User>> _fetchFromRemote(String userId) async {
     try {
       final userModel = await _remoteDataSource.getUserProfile(userId);
 
-      // Mettre en cache de manière asynchrone (fire and forget)
       unawaited(_localDataSource.cacheUserProfile(userId, userModel));
 
       return Right(userModel.toEntity());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on NetworkException catch (e) {
-      // En cas d'erreur réseau, essayer le cache même s'il est expiré
       final cachedUser = await _tryGetExpiredCache(userId);
       if (cachedUser != null) {
         return Right(cachedUser);
@@ -75,8 +65,6 @@ class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  /// Tente de récupérer les données du cache même si expirées
-  /// (utile en cas d'erreur réseau)
   Future<User?> _tryGetExpiredCache(String userId) async {
     try {
       final cachedUser = await _localDataSource.getCachedUserProfile(userId);

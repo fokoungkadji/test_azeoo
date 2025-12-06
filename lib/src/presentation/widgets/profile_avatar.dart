@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/user.dart';
 
-/// Widget affichant l'avatar de l'utilisateur
-///
-/// Affiche l'image de profil si disponible, sinon affiche
-/// les initiales de l'utilisateur sur un fond coloré.
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({
     required this.user,
@@ -14,10 +10,8 @@ class ProfileAvatar extends StatelessWidget {
     super.key,
   });
 
-  /// L'utilisateur dont on affiche l'avatar
   final User user;
 
-  /// Le rayon du cercle de l'avatar
   final double radius;
 
   @override

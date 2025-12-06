@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/user.dart';
 
-/// Widget affichant les informations du profil utilisateur
-///
-/// Affiche le nom complet et l'email de l'utilisateur
-/// dans une mise en page centrée.
 class ProfileInfo extends StatelessWidget {
   const ProfileInfo({
     required this.user,
     super.key,
   });
 
-  /// L'utilisateur dont on affiche les informations
   final User user;
 
   @override
@@ -22,7 +17,6 @@ class ProfileInfo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Nom complet
         Text(
           user.fullName,
           style: theme.textTheme.headlineMedium?.copyWith(
@@ -34,7 +28,6 @@ class ProfileInfo extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        // Prénom et Nom séparés
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -54,7 +47,6 @@ class ProfileInfo extends StatelessWidget {
           ],
         ),
 
-        // Email si disponible
         if (user.email != null && user.email!.isNotEmpty) ...[
           const SizedBox(height: 16),
           _buildEmailRow(context),

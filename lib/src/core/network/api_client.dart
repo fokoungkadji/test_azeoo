@@ -4,9 +4,6 @@ import 'package:injectable/injectable.dart';
 import '../error/exceptions.dart';
 import 'api_constants.dart';
 
-/// Client HTTP basé sur Dio pour les appels API
-///
-/// Gère les intercepteurs, les headers et la transformation des erreurs.
 @lazySingleton
 class ApiClient {
   ApiClient() : _dio = Dio(_baseOptions) {
@@ -31,11 +28,6 @@ class ApiClient {
     },
   );
 
-  /// Effectue une requête GET
-  ///
-  /// [path] Le chemin de l'endpoint
-  /// [queryParameters] Les paramètres de requête optionnels
-  /// [headers] Headers additionnels optionnels
   Future<Response<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
@@ -53,12 +45,9 @@ class ApiClient {
   }
 }
 
-/// Intercepteur de logging pour le debug
 class _LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // En production, utiliser un logger approprié
-    // print('🌐 REQUEST[${options.method}] => PATH: ${options.path}');
     handler.next(options);
   }
 
@@ -67,18 +56,15 @@ class _LoggingInterceptor extends Interceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
-    // print('✅ RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    // print('❌ ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
     handler.next(err);
   }
 }
 
-/// Intercepteur pour transformer les erreurs Dio en exceptions personnalisées
 class _ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {

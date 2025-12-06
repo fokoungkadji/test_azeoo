@@ -1,10 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// Classe de base pour les Failures
-///
-/// Les Failures représentent les erreurs métier retournées par les
-/// Repositories via Either<Failure, Success>.
-/// Contrairement aux Exceptions, elles sont typées et prévisibles.
 sealed class Failure extends Equatable {
   const Failure({this.message});
 
@@ -14,7 +9,6 @@ sealed class Failure extends Equatable {
   List<Object?> get props => [message];
 }
 
-/// Failure pour les erreurs serveur
 class ServerFailure extends Failure {
   const ServerFailure({super.message, this.statusCode});
 
@@ -28,7 +22,6 @@ class ServerFailure extends Failure {
       message ?? 'Une erreur serveur est survenue. Veuillez réessayer.';
 }
 
-/// Failure pour les erreurs réseau
 class NetworkFailure extends Failure {
   const NetworkFailure({super.message});
 
@@ -37,7 +30,6 @@ class NetworkFailure extends Failure {
       message ?? 'Impossible de se connecter. Vérifiez votre connexion internet.';
 }
 
-/// Failure pour les erreurs d'authentification
 class UnauthorizedFailure extends Failure {
   const UnauthorizedFailure({super.message});
 
@@ -46,7 +38,6 @@ class UnauthorizedFailure extends Failure {
       message ?? 'Session expirée. Veuillez vous reconnecter.';
 }
 
-/// Failure quand une ressource n'est pas trouvée
 class NotFoundFailure extends Failure {
   const NotFoundFailure({super.message});
 
@@ -55,7 +46,6 @@ class NotFoundFailure extends Failure {
       message ?? 'Utilisateur non trouvé.';
 }
 
-/// Failure pour les erreurs de cache
 class CacheFailure extends Failure {
   const CacheFailure({super.message});
 
@@ -64,7 +54,6 @@ class CacheFailure extends Failure {
       message ?? 'Erreur lors de la récupération des données en cache.';
 }
 
-/// Failure générique pour les erreurs inattendues
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure({super.message});
 

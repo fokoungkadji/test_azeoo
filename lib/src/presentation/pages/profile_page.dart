@@ -9,10 +9,6 @@ import '../widgets/loading_widget.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/profile_info.dart';
 
-/// Page d'affichage du profil utilisateur
-///
-/// Gère les différents états (loading, error, loaded) et
-/// supporte le pull-to-refresh.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -31,7 +27,6 @@ class ProfilePage extends StatelessWidget {
             ),
             loading: (previousUser) {
               if (previousUser != null) {
-                // Afficher les données précédentes pendant le chargement
                 return _buildProfileContent(
                   context,
                   user: previousUser,
@@ -49,7 +44,6 @@ class ProfilePage extends StatelessWidget {
             ),
             error: (message, previousUser) {
               if (previousUser != null) {
-                // Afficher les données précédentes avec un snackbar d'erreur
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _showErrorSnackbar(context, message);
                 });
@@ -84,24 +78,20 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Column(
             children: [
-              // Indicateur de chargement en haut si refresh
               if (isRefreshing || isLoading)
                 const Padding(
                   padding: EdgeInsets.only(bottom: 16),
                   child: LinearProgressIndicator(),
                 ),
 
-              // Avatar
               ProfileAvatar(user: user),
 
               const SizedBox(height: 32),
 
-              // Informations du profil
               ProfileInfo(user: user),
 
               const SizedBox(height: 32),
 
-              // ID utilisateur
               _buildUserIdBadge(context, user.id),
             ],
           ),

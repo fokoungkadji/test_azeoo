@@ -6,40 +6,24 @@ import '../../core/cache/cache_manager.dart';
 import '../../core/error/exceptions.dart';
 import '../models/user_model.dart';
 
-/// Interface pour la source de données locale (cache)
 abstract class UserLocalDataSource {
-  /// Récupère le profil utilisateur depuis le cache
-  ///
-  /// [userId] L'identifiant de l'utilisateur
-  ///
-  /// Retourne `null` si les données ne sont pas en cache ou expirées
-  /// Throws [CacheException] en cas d'erreur
   Future<UserModel?> getCachedUserProfile(String userId);
 
-  /// Sauvegarde le profil utilisateur en cache
-  ///
-  /// [userId] L'identifiant de l'utilisateur
-  /// [user] Le modèle utilisateur à mettre en cache
   Future<void> cacheUserProfile(String userId, UserModel user);
 
-  /// Vérifie si un profil est en cache et valide
   bool hasValidCache(String userId);
 
-  /// Supprime le profil utilisateur du cache
   Future<void> clearUserProfile(String userId);
 
-  /// Vide tout le cache
   Future<void> clearAll();
 }
 
-/// Implémentation de la source de données locale avec Hive
 @LazySingleton(as: UserLocalDataSource)
 class UserLocalDataSourceImpl implements UserLocalDataSource {
   UserLocalDataSourceImpl(this._cacheManager);
 
   final CacheManager _cacheManager;
 
-  /// Préfixe pour les clés de cache utilisateur
   static const String _userCachePrefix = 'user_profile_';
 
   String _getCacheKey(String userId) => '$_userCachePrefix$userId';
@@ -64,7 +48,6 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
     } on FormatException catch (e) {
       throw CacheException(message: 'Erreur de parsing du cache: ${e.message}');
     } catch (e) {
-      // En cas d'erreur, on retourne null pour permettre un fallback API
       return null;
     }
   }
@@ -76,8 +59,6 @@ class UserLocalDataSourceImpl implements UserLocalDataSource {
       final jsonString = jsonEncode(user.toJson());
       await _cacheManager.put(cacheKey, jsonString);
     } catch (e) {
-      // Ne pas faire échouer l'opération si le cache échoue
-      // On pourrait logger l'erreur ici
     }
   }
 

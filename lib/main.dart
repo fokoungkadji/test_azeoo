@@ -6,22 +6,14 @@ import 'src/core/platform/method_channel_handler.dart';
 import 'src/presentation/bloc/profile_cubit.dart';
 import 'src/presentation/pages/profile_page.dart';
 
-/// Point d'entrée pour le module Flutter intégré à React Native
-///
-/// Ce fichier gère:
-/// - L'initialisation du SDK
-/// - La communication via MethodChannel avec le natif
-/// - La mise à jour du profil quand l'userId change
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialiser les dépendances
   await configureDependencies();
 
   runApp(const AzeooProfileApp());
 }
 
-/// Application principale du SDK pour l'intégration React Native
 class AzeooProfileApp extends StatefulWidget {
   const AzeooProfileApp({super.key});
 
@@ -42,12 +34,10 @@ class _AzeooProfileAppState extends State<AzeooProfileApp> {
   }
 
   Future<void> _initializeMethodChannel() async {
-    // Configurer le callback pour recevoir les mises à jour d'userId
     MethodChannelHandler.initialize(
       onUserIdUpdated: _onUserIdUpdated,
     );
 
-    // Récupérer l'userId initial depuis le natif
     final initialUserId = await MethodChannelHandler.getInitialUserId();
 
     setState(() {
@@ -55,7 +45,6 @@ class _AzeooProfileAppState extends State<AzeooProfileApp> {
       _isInitialized = true;
     });
 
-    // Charger le profil initial
     _profileCubit.loadProfile(_currentUserId);
   }
 

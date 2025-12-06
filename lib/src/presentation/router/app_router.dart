@@ -6,16 +6,11 @@ import '../../core/di/injection.dart';
 import '../bloc/profile_cubit.dart';
 import '../pages/profile_page.dart';
 
-/// Configuration des routes de l'application
-///
-/// Utilise go_router pour une navigation déclarative et scalable.
 class AppRouter {
   AppRouter._();
 
-  /// Noms des routes
   static const String profileRoute = '/profile';
 
-  /// Configuration du router
   static GoRouter createRouter({String? initialUserId}) {
     return GoRouter(
       initialLocation: profileRoute,
@@ -24,7 +19,6 @@ class AppRouter {
           path: profileRoute,
           name: 'profile',
           builder: (context, state) {
-            // Récupérer l'userId depuis les query parameters ou la configuration
             final userId =
                 state.uri.queryParameters['userId'] ?? initialUserId ?? '1';
 

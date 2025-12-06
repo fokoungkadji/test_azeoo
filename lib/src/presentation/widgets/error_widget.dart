@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Widget affichant une erreur avec option de retry
-///
-/// Affiche un message d'erreur centré avec un bouton
-/// permettant de réessayer l'action.
 class ProfileErrorWidget extends StatelessWidget {
   const ProfileErrorWidget({
     required this.message,
@@ -11,10 +7,8 @@ class ProfileErrorWidget extends StatelessWidget {
     super.key,
   });
 
-  /// Message d'erreur à afficher
   final String message;
 
-  /// Callback appelé quand l'utilisateur appuie sur Réessayer
   final VoidCallback onRetry;
 
   @override
@@ -27,7 +21,6 @@ class ProfileErrorWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icône d'erreur
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -43,7 +36,6 @@ class ProfileErrorWidget extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Titre
             Text(
               'Oups !',
               style: theme.textTheme.headlineSmall?.copyWith(
@@ -54,7 +46,6 @@ class ProfileErrorWidget extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // Message d'erreur
             Text(
               message,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -65,7 +56,6 @@ class ProfileErrorWidget extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // Bouton réessayer
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),

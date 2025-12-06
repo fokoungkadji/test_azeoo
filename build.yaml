@@ -1,0 +1,35 @@
+# Configuration pour build_runner
+# Documentation: https://pub.dev/packages/build_runner
+
+targets:
+  $default:
+    builders:
+      # Freezed - Génération des classes immuables
+      freezed:
+        options:
+          format: true
+
+      # JSON Serializable - Génération du code de sérialisation
+      json_serializable:
+        options:
+          any_map: false
+          checked: true
+          create_factory: true
+          create_to_json: true
+          disallow_unrecognized_keys: false
+          explicit_to_json: true
+          field_rename: snake
+          generic_argument_factories: false
+          ignore_unannotated: false
+          include_if_null: false
+
+      # Injectable - Génération du code d'injection de dépendances
+      injectable_generator:injectable_builder:
+        enabled: true
+        options:
+          auto_register: false
+
+      # Hive - Génération des adaptateurs TypeAdapter
+      hive_generator:
+        options:
+          type_adapters: true

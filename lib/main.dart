@@ -1,35 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'azeoo_profile_sdk.dart';
+import 'src/core/di/injection.dart';
+import 'src/core/platform/method_channel_handler.dart';
+import 'src/presentation/bloc/profile_cubit.dart';
+import 'src/presentation/pages/profile_page.dart';
 
-/// Point d'entrée pour le test standalone du SDK
+/// Point d'entrée pour le module Flutter intégré à React Native
 ///
-/// Ce fichier n'est utilisé que pour le développement et les tests.
-/// En production, le SDK est utilisé via [AzeooProfileSdk].
+/// Ce fichier gère:
+/// - L'initialisation du SDK
+/// - La communication via MethodChannel avec le natif
+/// - La mise à jour du profil quand l'userId change
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialiser le SDK
-  await AzeooProfileSdk.initialize();
+  // Initialiser les dépendances
+  await configureDependencies();
 
-  runApp(const AzeooTestApp());
+  runApp(const AzeooProfileApp());
 }
 
-/// Application de test pour le SDK
-class AzeooTestApp extends StatelessWidget {
-  const AzeooTestApp({super.key});
+/// Application principale du SDK pour l'intégration React Native
+class AzeooProfileApp extends StatefulWidget {
+  const AzeooProfileApp({super.key});
+
+  @override
+  State<AzeooProfileApp> createState() => _AzeooProfileAppState();
+}
+
+class _AzeooProfileAppState extends State<AzeooProfileApp> {
+  late final ProfileCubit _profileCubit;
+  String _currentUserId = '1';
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileCubit = getIt<ProfileCubit>();
+    _initializeMethodChannel();
+  }
+
+  Future<void> _initializeMethodChannel() async {
+    // Configurer le callback pour recevoir les mises à jour d'userId
+    MethodChannelHandler.initialize(
+      onUserIdUpdated: _onUserIdUpdated,
+    );
+
+    // Récupérer l'userId initial depuis le natif
+    final initialUserId = await MethodChannelHandler.getInitialUserId();
+
+    setState(() {
+      _currentUserId = initialUserId ?? '1';
+      _isInitialized = true;
+    });
+
+    // Charger le profil initial
+    _profileCubit.loadProfile(_currentUserId);
+  }
+
+  void _onUserIdUpdated(String userId) {
+    debugPrint('Flutter: Received userId update: $userId');
+    if (userId != _currentUserId) {
+      setState(() {
+        _currentUserId = userId;
+      });
+      _profileCubit.updateUserId(userId);
+    }
+  }
+
+  @override
+  void dispose() {
+    MethodChannelHandler.dispose();
+    _profileCubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AZEOO Profile SDK Test',
+      title: 'AZEOO Profile SDK',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
         useMaterial3: true,
       ),
-      // Afficher le profil de l'utilisateur 1 par défaut
-      home: AzeooProfileSdk.getProfileWidget(userId: '1'),
+      home: _isInitialized
+          ? BlocProvider<ProfileCubit>.value(
+              value: _profileCubit,
+              child: const ProfilePage(),
+            )
+          : const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
     );
   }
 }
